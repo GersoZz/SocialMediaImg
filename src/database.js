@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 
-const { database } = require("./keys");
+const { RS_MDB_HOST, RS_MDB_DATABASE } = process.env;
+const MONGODB_URI = process.env.MONGODB_URI || `mongodb://${RS_MDB_HOST}/${RS_MDB_DATABASE}`;
 
 mongoose
-  .connect(database.URI, {
+  .connect(MONGODB_URI, {
     useNewUrlparser: true,
   })
-  .then((db) => console.log("Db is connected"))
+  .then((db) => console.log("DB is connected"))
   .catch((err) => console.error(err));

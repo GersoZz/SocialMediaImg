@@ -4,7 +4,7 @@ const fs = require("fs-extra");
 const { Image, Comment } = require("../models");
 const md5 = require("md5");
 
-const sidebar= require('../helpers/sidebar');
+const sidebar = require("../helpers/sidebar");
 
 const ctrl = {};
 
@@ -32,7 +32,9 @@ ctrl.index = async (req, res) => {
 
     viewModel.image = newObjImage;
 
-    const comments = await Comment.find({ image_id: image._id }).sort({ timestamp: -1 }).lean();
+    const comments = await Comment.find({ image_id: image._id })
+      .sort({ timestamp: -1 })
+      .lean();
     viewModel.comments = comments;
     viewModel = await sidebar(viewModel);
 
@@ -51,11 +53,13 @@ ctrl.index = async (req, res) => {
 };
 
 ctrl.create = async (req, res) => {
+
   const saveImage = async () => {
+
     const imgUrl = randomNumber();
 
     const images = await Image.find({ filename: imgUrl }); //pq lo encuentra?//expReg?
-    if (images.length > 0) {
+    if (images.length > 0) {//if(images)
       saveImage();
     } else {
       console.log(imgUrl);
@@ -97,17 +101,15 @@ ctrl.like = async (req, res) => {
     filename: { $regex: req.params.image_id },
   });
 
-  if(image){
-    image.likes=image.likes+1;
+  if (image) {
+    image.likes = image.likes + 1;
     await image.save();
-    console.log('lean',image.likes);
+    console.log("lean", image.likes);
 
-    res.json({likes:image.likes});
-  }else{
-    res.status(500).json({error:'Internal Error'});
+    res.json({ likes: image.likes });
+  } else {
+    res.status(500).json({ error: "Internal Error" });
   }
-
-
 };
 
 ctrl.comment = async (req, res) => {
@@ -134,12 +136,14 @@ ctrl.comment = async (req, res) => {
 };
 
 ctrl.remove = async (req, res) => {
-  const image = await Image.findOne({filename:{$regex:req.params.image_id}});
+  const image = await Image.findOne({
+    filename: { $regex: req.params.image_id },
+  });
   console.log(req.params.image_id);
 
-  if(image){
-    await fs.unlink(path.resolve('./src/public/upload/'+image.filename));
-    await Comment.deleteMany({image_id:image._id});//deleteOne -> deleteMany
+  if (image) {
+    await fs.unlink(path.resolve("./src/public/upload/" + image.filename));
+    await Comment.deleteMany({ image_id: image._id }); //deleteOne -> deleteMany
     await image.remove();
     res.json(true);
   }
