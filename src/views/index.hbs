@@ -1,0 +1,106 @@
+<div class="row">
+  <div>
+    <div class="card">
+      <div class="card-header bg-dark">
+        <h3 class="card-title text-white"><i class="fa-solid fa-image"></i>
+          Upload an Image</h3>
+      </div>
+      <div class="card-body">
+        <form action="/images" method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+
+            <input
+              type="text"
+              name="title"
+              class="form-control"
+              placeholder="Image Title"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <textarea
+              name="description"
+              class="form-control"
+              placeholder="Image Description"
+              required
+            ></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="formFile" class="form-label">Choose File</label>
+            <input
+              name="image"
+              class="form-control"
+              type="file"
+              id="formFile"
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary"><i class="fa fa-upload"></i> Upload Photo</button>
+
+        </form>
+      </div>
+    </div>
+  </div>
+  {{!--   <div class="col-md-8 mt-3">
+    {{#if photos}}
+      <table class="table">
+        <thead>
+          <tr> <th>Title</th> <th>Description</th> <th>Operations</th></tr>
+
+        </thead>
+        <tbody>
+
+          {{#each photos}}
+            <tr>
+              <td>{{title}}</td>
+              <td>{{description}}</td>
+              <td>
+                <a
+                  href="{{imageURL}}"
+                  target="_blank"
+                  class="btn btn-primary"
+                >View</a>
+                <a
+                  href="/images/delete/{{_id}}"
+                  class="btn btn-danger"
+                >Delete</a>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    {{else}}
+      <div class="h-100 d-flex align-item-center justify-content-center">
+        <div class="text-center text-white">
+          <h1>There are no pictures</h1>
+          <img src="/images/GcoreChan2.png" width="200" />
+        </div>
+      </div>
+
+    {{/if}}
+  </div> --}}
+
+</div>
+
+<div class="card mt-2">
+  <div class="card-header bg-dark text-white">
+    <h3> <i class="far fa-images"></i> Recent Uploads</h3>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      {{#each images}}
+
+        <div class="col-6 col-md-4 mb-3">
+          <a href="/images/{{uniqueId}}" >
+            <img
+              src="/public/upload/{{filename}}"
+              class="w-100 h-100 img-thumbnail"
+            />
+          </a>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</div>
