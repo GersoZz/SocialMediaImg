@@ -6,8 +6,16 @@ const md5 = require("md5");
 
 const sidebar = require("../helpers/sidebar");
 
+const cloudinary = require("cloudinary");
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 const ctrl = {};
 
+/* vista de lo que se ha subido y de los comments */
 ctrl.index = async (req, res) => {
   let viewModel = { image: {}, comments: {} };
 
@@ -46,6 +54,8 @@ ctrl.index = async (req, res) => {
     }
     viewModel.sidebar.popular = auxArr2;
 
+    console.log('a ver',viewModel.sidebar.comments);
+
     res.render("image", viewModel);
   } else {
     res.redirect("/");
@@ -53,13 +63,12 @@ ctrl.index = async (req, res) => {
 };
 
 ctrl.create = async (req, res) => {
-
   const saveImage = async () => {
-
     const imgUrl = randomNumber();
 
     const images = await Image.find({ filename: imgUrl }); //pq lo encuentra?//expReg?
-    if (images.length > 0) {//if(images)
+    if (images.length > 0) {
+      //if(images)
       saveImage();
     } else {
       console.log(imgUrl);
@@ -74,16 +83,24 @@ ctrl.create = async (req, res) => {
         ext === ".jpeg" ||
         ext === ".gif"
       ) {
+        const result = await cloudinary.v2.uploader.upload(
+          req.file.path
+        ); /* sube a cloudinary */
+        //result.url, result.public_id
         await fs.rename(imageTempPath, targetPath);
         const newImg = new Image({
           title: req.body.title,
           filename: imgUrl + ext,
           description: req.body.description,
+          imageURL: result.url,
+          public_id: result.public_id,
         });
         const imageSaved = await newImg.save();
         res.redirect("/images/" + imgUrl);
         //res.send("works");
         //console.log(newImg);
+
+        //await fs.unlink(req.file.path); //elimina el archivo//targetPath ya no ser[ia necesario
       } else {
         await fs.unlink(imageTempPath); //P!
         res.status(500).json({ error: "Only Images are allowed" });
@@ -145,6 +162,9 @@ ctrl.remove = async (req, res) => {
     await fs.unlink(path.resolve("./src/public/upload/" + image.filename));
     await Comment.deleteMany({ image_id: image._id }); //deleteOne -> deleteMany
     await image.remove();
+
+    await cloudinary.v2.uploader.destroy(image.public_id);
+
     res.json(true);
   }
 };
