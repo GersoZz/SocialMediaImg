@@ -32,7 +32,7 @@ ctrl.index = async (req, res) => {
   viewModel.sidebar.popular = auxArr2;
 
 /*   console.log(viewModel.sidebar.popular); */
-  console.log(viewModel.sidebar.comments);
+/*   console.log(viewModel.sidebar.comments); */
   res.render("index", viewModel);
 };
 

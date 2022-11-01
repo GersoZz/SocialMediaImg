@@ -17,6 +17,11 @@ async function imageTotalViewsCounter() {
       },
     },
   ]);
+  /* console.log(result.length); */
+  if(result.length === 0){
+    /* console.log('null xd') */
+    return 0;
+  }
 
   return result[0].viewsTotal;
 }
@@ -30,6 +35,10 @@ async function likesTotalCounter() {
       },
     },
   ]);
+
+  if(result.length === 0){
+    return 0
+  }
 
   return result[0].likesTotal;
 }

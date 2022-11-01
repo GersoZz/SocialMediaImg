@@ -54,7 +54,7 @@ ctrl.index = async (req, res) => {
     }
     viewModel.sidebar.popular = auxArr2;
 
-    console.log('a ver',viewModel.sidebar.comments);
+    /* console.log('a ver',viewModel.sidebar.comments); */
 
     res.render("image", viewModel);
   } else {
@@ -71,7 +71,7 @@ ctrl.create = async (req, res) => {
       //if(images)
       saveImage();
     } else {
-      console.log(imgUrl);
+      /* console.log(imgUrl); */
 
       const imageTempPath = req.file.path;
       const ext = path.extname(req.file.originalname).toLowerCase();
@@ -87,7 +87,7 @@ ctrl.create = async (req, res) => {
           req.file.path
         ); /* sube a cloudinary */
         //result.url, result.public_id
-        await fs.rename(imageTempPath, targetPath);
+        //await fs.rename(imageTempPath, targetPath);
         const newImg = new Image({
           title: req.body.title,
           filename: imgUrl + ext,
@@ -100,9 +100,10 @@ ctrl.create = async (req, res) => {
         //res.send("works");
         //console.log(newImg);
 
-        //await fs.unlink(req.file.path); //elimina el archivo//targetPath ya no ser[ia necesario
+        await fs.unlink(req.file.path); //elimina el archivo//targetPath ya no ser[ia necesario
       } else {
-        await fs.unlink(imageTempPath); //P!
+        await fs.unlink(req.file.path);
+        //await fs.unlink(imageTempPath); //P!
         res.status(500).json({ error: "Only Images are allowed" });
       }
       /*   console.log(req.file); */
@@ -121,7 +122,7 @@ ctrl.like = async (req, res) => {
   if (image) {
     image.likes = image.likes + 1;
     await image.save();
-    console.log("lean", image.likes);
+    /* console.log("lean", image.likes); */
 
     res.json({ likes: image.likes });
   } else {
@@ -156,10 +157,10 @@ ctrl.remove = async (req, res) => {
   const image = await Image.findOne({
     filename: { $regex: req.params.image_id },
   });
-  console.log(req.params.image_id);
+  /* console.log(req.params.image_id); */
 
   if (image) {
-    await fs.unlink(path.resolve("./src/public/upload/" + image.filename));
+    //await fs.unlink(path.resolve("./src/public/upload/" + image.filename));
     await Comment.deleteMany({ image_id: image._id }); //deleteOne -> deleteMany
     await image.remove();
 
